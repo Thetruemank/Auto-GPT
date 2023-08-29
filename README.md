@@ -33,6 +33,7 @@ Demo made by <a href=https://twitter.com/BlakeWerlinger>Blake Werlinger</a>
 - 🔗 Access to popular websites and platforms
 - 🗃️ File storage and summarization with GPT-3.5
 - 🔌 Extensibility with Plugins
+- 📝 Kotlin code generation Ability
 
 ## Quickstart
 
@@ -42,6 +43,15 @@ Demo made by <a href=https://twitter.com/BlakeWerlinger>Blake Werlinger</a>
 3. Follow the [installation instructions][docs/setup]
 4. Configure any additional features you want, or install some [plugins][docs/plugins]
 5. [Run][docs/usage] the app
+
+## Kotlin code generation Ability
+
+The Kotlin code generation Ability is a new feature that allows you to generate Kotlin code. This Ability accepts the following arguments:
+
+- `code`: A string that represents the Kotlin code to be generated.
+- `variables`: An array of objects that represent the variables to be used in the Kotlin code. Each object should have a `name` property that represents the name of the variable and a `type` property that represents the type of the variable.
+
+The output of the Kotlin code generation Ability is a string of Kotlin code.
 
 Please see the [documentation][docs] for full setup instructions and configuration options.
 
@@ -61,8 +71,8 @@ Please see the [documentation][docs] for full setup instructions and configurati
 [docs/usage]: https://docs.agpt.co/usage/
 [docs/plugins]: https://docs.agpt.co/plugins/
 
-<h2 align="center"> 💖 Help Fund Auto-GPT's Development 💖</h2>
-<p align="center">
+## 💖 Help Fund Auto-GPT's Development 💖
+<p align="center"><a href="https://star-history.com/#Torantulino/auto-gpt&Date"><img src="https://api.star-history.com/svg?repos=Torantulino/auto-gpt&type=Date" alt="Star History Chart"></a></p>
 If you can spare a coffee, you can help to cover the costs of developing Auto-GPT and help to push the boundaries of fully autonomous AI!
 Your support is greatly appreciated. Development of this free, open-source project is made possible by all the <a href="https://github.com/Significant-Gravitas/Auto-GPT/graphs/contributors">contributors</a> and <a href="https://github.com/sponsors/Torantulino">sponsors</a>. If you'd like to sponsor this project and have your avatar or company logo appear below <a href="https://github.com/sponsors/Torantulino">click here</a>.
 </p>
