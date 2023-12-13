@@ -114,7 +114,7 @@ class AbilityRegister:
             ]:
                 ability = os.path.relpath(
                     ability_path, os.path.dirname(__file__)
-                ).replace("/", ".")
+                ).replace("/", ".").replace("code_generation.", "")
                 try:
                     module = importlib.import_module(
                         f".{ability[:-3]}", package="forge.sdk.abilities"
@@ -129,7 +129,7 @@ class AbilityRegister:
                                 if len(ability.split(".")) > 1
                                 else "general"
                             )
-                            self.abilities[func.ability.name] = func.ability
+                            self.abilities[func.ability.name] = func
                 except Exception as e:
                     print(f"Error occurred while registering abilities: {str(e)}")
 
