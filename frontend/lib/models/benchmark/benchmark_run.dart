@@ -1,6 +1,7 @@
 import 'package:auto_gpt_flutter_client/models/benchmark/config.dart';
 import 'package:auto_gpt_flutter_client/models/benchmark/metrics.dart';
 import 'package:auto_gpt_flutter_client/models/benchmark/repository_info.dart';
+import 'package:auto_gpt_flutter_client/code_generation/kotlin_code_generator.dart';
 import 'package:auto_gpt_flutter_client/models/benchmark/run_details.dart';
 import 'package:auto_gpt_flutter_client/models/benchmark/task_info.dart';
 
@@ -28,6 +29,9 @@ class BenchmarkRun {
   /// Configuration settings related to the benchmark run.
   final Config config;
 
+  /// The Kotlin code generated based on the benchmark run data.
+  final String kotlinCode;
+
   /// Constructs a new `BenchmarkRun` instance.
   ///
   /// [repositoryInfo]: Information about the repository and team.
@@ -39,6 +43,12 @@ class BenchmarkRun {
   BenchmarkRun({
     required this.repositoryInfo,
     required this.runDetails,
+    required this.taskInfo,
+    required this.metrics,
+    required this.reachedCutoff,
+    required this.config,
+    String kotlinCode, // New required parameter
+  }) : kotlinCode = KotlinCodeGenerator().generateCode(this);
     required this.taskInfo,
     required this.metrics,
     required this.reachedCutoff,
@@ -57,6 +67,7 @@ class BenchmarkRun {
         metrics: Metrics.fromJson(json['metrics']),
         reachedCutoff: json['reached_cutoff'] ?? false,
         config: Config.fromJson(json['config']),
+        kotlinCode: json['kotlin_code'] ?? '', // Defaults to an empty string if not provided
       );
 
   /// Converts the `BenchmarkRun` instance to a map.
