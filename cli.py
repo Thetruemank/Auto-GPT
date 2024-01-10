@@ -84,29 +84,12 @@ d88P     888  "Y88888  "Y888 "Y88P"   "Y8888P88 888           888
                 )
             )
         else:
-            raise subprocess.CalledProcessError(
-                returncode=1, cmd="git config user.name or user.email"
-            )
+            user_name = 'GitHub Actions'
+            user_email = 'actions@github.com'
 
     except subprocess.CalledProcessError:
-        # If the GitHub account is not configured, print instructions on how to set it up
-        click.echo(click.style("⚠️ Git user is not configured.", fg="red"))
-        click.echo(
-            click.style(
-                "To configure Git with your user info, use the following commands:",
-                fg="red",
-            )
-        )
-        click.echo(
-            click.style(
-                '  git config --global user.name "Your (user)name"', fg="red"
-            )
-        )
-        click.echo(
-            click.style(
-                '  git config --global user.email "Your email"', fg="red"
-            )
-        )
+        # If the GitHub account is not configured, use default GitHub Actions user
+        click.echo(click.style("⚠️ Git user is not configured. Using default GitHub Actions user.", fg="yellow"))
         install_error = True
 
     print_access_token_instructions = False
