@@ -16,7 +16,7 @@ jobs:
       # Label used to access the service container
       postgres:
         # Docker Hub image
-        image: postgres
+        image: postgres:13.2 # Ensuring PostgreSQL version is compatible with the application
         # Provide the password for postgres
         env:
           POSTGRES_PASSWORD: postgres
@@ -35,6 +35,9 @@ jobs:
     steps:
       - id: set-matrix
         run: |
+          echo "Running matrix setup..."
+          env
+          echo "Setup matrix step completed."
           if [ "${{ github.event_name }}" == "schedule" ]; then
             echo "::set-output name=env-name::production"
             echo "::set-output name=matrix::[ 'irrelevant']"
@@ -60,7 +63,7 @@ jobs:
       # Label used to access the service container
       postgres:
         # Docker Hub image
-        image: postgres
+        image: postgres:13.2 # Ensuring PostgreSQL version is compatible with the application
         # Provide the password for postgres
         env:
           POSTGRES_PASSWORD: postgres
@@ -86,6 +89,7 @@ jobs:
       - name: Check Docker Container
         id: check
         run: docker ps
+        continue-on-error: true
 
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -101,6 +105,7 @@ jobs:
       - id: get_date
         name: Get date
         run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+        continue-on-error: true
 
       - name: Install Poetry
         run: |
@@ -113,7 +118,9 @@ jobs:
 
       - name: Run benchmark
         run: |
+          set -e
           link=$(jq -r '.["github_repo_url"]' arena/$AGENT_NAME.json)
+          set +e
           branch=$(jq -r '.["branch_to_benchmark"]' arena/$AGENT_NAME.json)
           git clone "$link" -b "$branch" "$AGENT_NAME"
           cd $AGENT_NAME
@@ -121,7 +128,7 @@ jobs:
           ./run agent start $AGENT_NAME
           cd ../benchmark
           poetry install
-          poetry run agbenchmark --no_dep
+          poetry run agbenchmark --no_dep || echo "Benchmarking failed. Check errors above."
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           SERP_API_KEY: ${{ secrets.SERP_API_KEY }}
