@@ -26,12 +26,22 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
+    - name: Check environment variables and secrets
+      run: | 
+          env | grep MY_SECRET_ENV
+          if [ $? -ne 0 ]; then
+            echo "Required environment variable 'MY_SECRET_ENV' is missing";
+            exit 1;
+          fi
+
     - name: Run tests
       run: pytest
+    
 
     - name: Upload logs if failure
       if: failure()
       uses: actions/upload-artifact@v2
       with:
         name: logs
-        path: path/to/logs
+        path: ./logs
+    
