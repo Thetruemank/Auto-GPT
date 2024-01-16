@@ -2,6 +2,8 @@
 from logging import _nameToLevel as logLevelMap
 from pathlib import Path
 from typing import Optional
+import os
+import os.environ
 
 import click
 
@@ -13,7 +15,7 @@ from autogpt.logs.config import LogFormatName
 def cli(ctx: click.Context):
     # Invoke `run` by default
     if ctx.invoked_subcommand is None:
-        ctx.invoke(run)
+        ctx.invoke(run, username=os.environ['DOCKER_USERNAME'], password=os.environ['DOCKER_PASSWORD'])
 
 
 @cli.command()
@@ -265,7 +267,7 @@ def serve(
     # Put imports inside function to avoid importing everything when starting the CLI
     from autogpt.app.main import run_auto_gpt_server
 
-    run_auto_gpt_server(
+    run_auto_gpt_server(username=os.environ['DOCKER_USERNAME'], password=os.environ['DOCKER_PASSWORD'], 
         prompt_settings=prompt_settings,
         debug=debug,
         log_level=log_level,
