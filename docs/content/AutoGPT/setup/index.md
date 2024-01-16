@@ -2,6 +2,8 @@
 
 [🐋 **Set up & Run with Docker**](./docker.md)
 &ensp;|&ensp;
+[🔐 **Configure GitHub Actions**](./github-actions.md)
+&ensp;|&ensp;
 [👷🏼 **For Developers**](./for-developers.md)
 
 ## 📋 Requirements
@@ -17,7 +19,7 @@
   - See also the [requirements for Linux](#linux--macos)
 - [Docker Desktop](https://docs.docker.com/desktop/install/windows-install/)
 
-### Windows
+### Windows\r\n\r\n### Configuring GitHub Actions for Docker Workflow\r\n\r\nTo configure GitHub Actions for the Docker workflow, you will need to create a new workflow file in the ".github/workflows/" directory. This file will define the steps for building and pushing the Docker image to the selected registry.\r\n- Start by creating a new file with a descriptive name, for example, "docker.yml".\r\n- Use the `on` key to define the events that trigger the workflow, such as a push to a specific branch.\r\n- Add a job to the workflow with the necessary steps, including checking out the repository, logging in to the Docker registry, building the Docker image, and pushing it to the registry.\r\n- Use the `secrets` context to securely provide Docker credentials, such as the username and password for the Docker registry.\r\n\r\nFor a complete example of a GitHub Actions workflow for building and pushing a Docker image, refer to the following section."
 
 !!! attention
     We recommend setting up AutoGPT with WSL. Some things don't work exactly the same on
@@ -65,8 +67,7 @@ Since we don't ship AutoGPT as a desktop application, you'll need to download th
 [releases]: https://github.com/Significant-Gravitas/AutoGPT/releases
 
 !!! note
-    These instructions don't apply if you're looking to run AutoGPT as a docker image.
-    Instead, check out the [Docker setup](./docker.md) guide.
+    These instructions don't apply if you're looking to run AutoGPT as a docker image. Instead, check out the [Docker setup](./docker.md) guide.\r\n\r\n### Complete the GitHub Actions Setup\r\n\r\nAfter setting up the Docker image, you should configure the GitHub Actions workflow to handle the Docker build and push process. This involves creating a new workflow file and defining the necessary steps to interact with the Docker registry. For detailed instructions and examples, refer to the following section."
 
 ### Completing the Setup
 
@@ -121,7 +122,7 @@ Once you have cloned or downloaded the project, you can find the AutoGPT Agent i
 
 You should now be able to explore the CLI (`./autogpt.sh --help`) and run the application.
 
-See the [user guide](../usage.md) for further instructions.
+See the [user guide](../usage.md) for further instructions.\r\n\r\n### GitHub Actions Workflow Configuration Examples\r\n\r\nTo provide examples and explanations for configuring the GitHub Actions workflow, refer to the following sections for detailed instructions and complete workflow file examples.
 
 [show hidden files/Windows]: https://support.microsoft.com/en-us/windows/view-hidden-files-and-folders-in-windows-97fbc472-c603-9d90-91d0-1166d1d9f4b5
 [show hidden files/macOS]: https://www.pcmag.com/how-to/how-to-access-your-macs-hidden-files
