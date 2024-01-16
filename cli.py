@@ -49,10 +49,14 @@ d88P     888  "Y88888  "Y888 "Y88P"   "Y8888P88 888           888
     if os.path.exists(setup_script):
         click.echo(click.style("🚀 Setup initiated...\n", fg="green"))
         try:
-            subprocess.check_call([setup_script], cwd=script_dir)
-        except subprocess.CalledProcessError:
+            subprocess.check_call([setup_script], cwd=script_dir, stderr=subprocess.PIPE)
+        except subprocess.CalledProcessError as e:
+            error_message = e.stderr.decode().strip() if e.stderr else "Unknown error occurred."
             click.echo(
-                click.style("❌ There was an issue with the installation.", fg="red")
+                click.style(f"❌ Installation failed with error: {error_message}", fg="red")
+            )
+            click.echo(
+                click.style("Please check the setup.sh script for issues.", fg="red")
             )
             install_error = True
     else:
