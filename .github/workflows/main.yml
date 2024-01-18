@@ -1,0 +1,52 @@
+name: Main CI/CD Workflow
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - '**'
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+  install-dependencies:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: |
+          chmod +x ./cli.py
+          ./cli.py setup || { echo "Failed to install dependencies"; exit 1; }
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  run-tests:
+    needs: install-dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+
+      - name: Run tests
+        run: pytest || { echo "Tests failed"; exit 1; }
+        continue-on-error: true
+
+      - name: Upload logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-logs
+          path: ./logs/**/*
