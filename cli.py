@@ -46,21 +46,23 @@ d88P     888  "Y88888  "Y888 "Y88P"   "Y8888P88 888           888
     script_dir = os.path.dirname(os.path.realpath(__file__))
     setup_script = os.path.join(script_dir, "setup.sh")
     install_error = False
+    # Check if mandatory environment variables are set
+    required_env_vars = ['GITHUB_TOKEN']
+    missing_env_vars = [var for var in required_env_vars if not os.environ.get(var)]
+    if missing_env_vars:
+        click.echo(click.style(f"❌ Missing environment variables: {', '.join(missing_env_vars)}", fg="red"))
+        return
+    
     if os.path.exists(setup_script):
-        click.echo(click.style("🚀 Setup initiated...\n", fg="green"))
+        click.echo(click.style("🚀 Setup initiated...", fg="green"))
         try:
-            subprocess.check_call([setup_script], cwd=script_dir)
-        except subprocess.CalledProcessError:
-            click.echo(
-                click.style("❌ There was an issue with the installation.", fg="red")
-            )
+            subprocess.check_call([setup_script], cwd=script_dir, env=dict(os.environ, GITHUB_TOKEN=os.environ['GITHUB_TOKEN']))
+            click.echo(click.style("✅ Setup script completed successfully", fg="green"))
+        except subprocess.CalledProcessError as e:
+            click.echo(click.style(f"❌ Setup script failed with error: {e}", fg="red"))
             install_error = True
     else:
-        click.echo(
-            click.style(
-                "❌ Error: setup.sh does not exist in the current directory.", fg="red"
-            )
-        )
+        click.echo(click.style("❌ Error: setup.sh does not exist in the current directory.", fg="red"))
         install_error = True
 
     try:
