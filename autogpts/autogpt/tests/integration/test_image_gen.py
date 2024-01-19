@@ -1,5 +1,6 @@
 import functools
 import hashlib
+from autogpts.autogpt.tests.utils import skip_in_ci
 from pathlib import Path
 from unittest.mock import patch
 
@@ -28,6 +29,7 @@ def test_dalle(agent: Agent, workspace, image_size, patched_api_requestor):
     )
 
 
+@skip_in_ci
 @pytest.mark.xfail(
     reason="The image is too big to be put in a cassette for a CI pipeline. "
     "We're looking into a solution."
@@ -48,6 +50,7 @@ def test_huggingface(agent: Agent, workspace, image_size, image_model):
     )
 
 
+@skip_in_ci
 @pytest.mark.xfail(reason="SD WebUI call does not work.")
 def test_sd_webui(agent: Agent, workspace, image_size):
     """Test SD WebUI image generation."""
@@ -59,6 +62,7 @@ def test_sd_webui(agent: Agent, workspace, image_size):
     )
 
 
+@skip_in_ci
 @pytest.mark.xfail(reason="SD WebUI call does not work.")
 def test_sd_webui_negative_prompt(agent: Agent, workspace, image_size):
     gen_image = functools.partial(
