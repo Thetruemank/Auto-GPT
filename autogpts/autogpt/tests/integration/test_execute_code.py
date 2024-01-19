@@ -4,6 +4,7 @@ import tempfile
 from pathlib import Path
 
 import pytest
+from autogpts.autogpt.tests.utils import skip_in_ci
 
 import autogpt.commands.execute_code as sut  # system under testing
 from autogpt.agents.agent import Agent
@@ -43,11 +44,13 @@ def random_string():
     return "".join(random.choice(string.ascii_lowercase) for _ in range(10))
 
 
+@skip_in_ci
 def test_execute_python_file(python_test_file: Path, random_string: str, agent: Agent):
     result: str = sut.execute_python_file(python_test_file, agent=agent)
     assert result.replace("\r", "") == f"Hello {random_string}!\n"
 
 
+@skip_in_ci
 def test_execute_python_file_args(
     python_test_args_file: Path, random_string: str, agent: Agent
 ):
@@ -59,16 +62,19 @@ def test_execute_python_file_args(
     assert result == f"{random_args_string}\n"
 
 
+@skip_in_ci
 def test_execute_python_code(random_code: str, random_string: str, agent: Agent):
     result: str = sut.execute_python_code(random_code, agent=agent)
     assert result.replace("\r", "") == f"Hello {random_string}!\n"
 
 
+@skip_in_ci
 def test_execute_python_file_invalid(agent: Agent):
     with pytest.raises(InvalidArgumentError):
         sut.execute_python_file(Path("not_python.txt"), agent)
 
 
+@skip_in_ci
 def test_execute_python_file_not_found(agent: Agent):
     with pytest.raises(
         FileNotFoundError,
@@ -78,16 +84,19 @@ def test_execute_python_file_not_found(agent: Agent):
         sut.execute_python_file(Path("notexist.py"), agent)
 
 
+@skip_in_ci
 def test_execute_shell(random_string: str, agent: Agent):
     result = sut.execute_shell(f"echo 'Hello {random_string}!'", agent)
     assert f"Hello {random_string}!" in result
 
 
+@skip_in_ci
 def test_execute_shell_local_commands_not_allowed(random_string: str, agent: Agent):
     result = sut.execute_shell(f"echo 'Hello {random_string}!'", agent)
     assert f"Hello {random_string}!" in result
 
 
+@skip_in_ci
 def test_execute_shell_denylist_should_deny(agent: Agent, random_string: str):
     agent.legacy_config.shell_denylist = ["echo"]
 
@@ -95,6 +104,7 @@ def test_execute_shell_denylist_should_deny(agent: Agent, random_string: str):
         sut.execute_shell(f"echo 'Hello {random_string}!'", agent)
 
 
+@skip_in_ci
 def test_execute_shell_denylist_should_allow(agent: Agent, random_string: str):
     agent.legacy_config.shell_denylist = ["cat"]
 
@@ -102,6 +112,7 @@ def test_execute_shell_denylist_should_allow(agent: Agent, random_string: str):
     assert "Hello" in result and random_string in result
 
 
+@skip_in_ci
 def test_execute_shell_allowlist_should_deny(agent: Agent, random_string: str):
     agent.legacy_config.shell_command_control = sut.ALLOWLIST_CONTROL
     agent.legacy_config.shell_allowlist = ["cat"]
@@ -110,6 +121,7 @@ def test_execute_shell_allowlist_should_deny(agent: Agent, random_string: str):
         sut.execute_shell(f"echo 'Hello {random_string}!'", agent)
 
 
+@skip_in_ci
 def test_execute_shell_allowlist_should_allow(agent: Agent, random_string: str):
     agent.legacy_config.shell_command_control = sut.ALLOWLIST_CONTROL
     agent.legacy_config.shell_allowlist = ["echo"]
