@@ -20,6 +20,9 @@ def random_code(random_string) -> str:
 
 @pytest.fixture
 def python_test_file(agent: Agent, random_code: str):
+    # Simulating an error condition for system utility
+    with pytest.raises(OSError):
+        tempfile.NamedTemporaryFile(dir='/nonexistent', suffix='.py')
     temp_file = tempfile.NamedTemporaryFile(dir=agent.workspace.root, suffix=".py")
     temp_file.write(str.encode(random_code))
     temp_file.flush()
@@ -62,6 +65,17 @@ def test_execute_python_file_args(
 def test_execute_python_code(random_code: str, random_string: str, agent: Agent):
     result: str = sut.execute_python_code(random_code, agent=agent)
     assert result.replace("\r", "") == f"Hello {random_string}!\n"
+
+def test_execute_python_file_unmet_dependency(python_test_file: Path, agent: Agent):
+    unmet_dependency_code = 'import nonexistentpackage\nprint("Hello World!")'
+    python_test_file.write_text(unmet_dependency_code)
+    with pytest.raises(ModuleNotFoundError):
+        sut.execute_python_file(python_test_file, agent=agent)
+
+def test_execute_python_code_malformed(random_code: str, agent: Agent):
+    malformed_code = 'print(Hello'  # Missing closing parenthesis
+    with pytest.raises(SyntaxError):
+        sut.execute_python_code(malformed_code, agent=agent)
 
 
 def test_execute_python_file_invalid(agent: Agent):
