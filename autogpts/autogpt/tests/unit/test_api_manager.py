@@ -87,3 +87,23 @@ class TestApiManager:
 
             assert result[0]["id"] == "gpt-3.5-turbo"
             assert api_manager.models[0]["id"] == "gpt-3.5-turbo"
+
+    def test_invalid_model_update_cost(self):
+        """Test updating cost with an invalid model name."""
+        with pytest.raises(KeyError):
+            api_manager.update_cost(100, 200, "invalid-model")
+
+    def test_api_response_handling(self):
+        """Test handling unexpected API response formats."""
+        with patch('openai.Model.list', return_value={'unusual': 'response'}) as mock_list_models:
+            result = api_manager.get_models()
+            assert result == []
+            assert not api_manager.models
+
+    def test_reset_behavior(self):
+        """Test if reset behavior works correctly."""
+        api_manager.update_cost(100, 200, 'gpt-3.5-turbo')
+        api_manager.reset()
+        assert api_manager.get_total_prompt_tokens() == 0
+        assert api_manager.get_total_completion_tokens() == 0
+        assert api_manager.get_total_cost() == 0
