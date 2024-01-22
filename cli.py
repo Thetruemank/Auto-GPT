@@ -49,8 +49,17 @@ d88P     888  "Y88888  "Y888 "Y88P"   "Y8888P88 888           888
     if os.path.exists(setup_script):
         click.echo(click.style("🚀 Setup initiated...\n", fg="green"))
         try:
-            subprocess.check_call([setup_script], cwd=script_dir)
-        except subprocess.CalledProcessError:
+            subprocess_completed = subprocess.run([setup_script], cwd=script_dir, capture_output=True, text=True)
+            click.echo(subprocess_completed.stdout)
+            click.echo(subprocess_completed.stderr, err=True)
+            if subprocess_completed.returncode != 0:
+                click.echo(click.style(f"❌ Setup script execution failed with return code {subprocess_completed.returncode}", fg="red"))
+                click.echo(subprocess_completed.stdout)
+                click.echo(subprocess_completed.stderr, err=True)
+                return
+        except Exception as e:
+            click.echo(click.style(f"Exception during setup: {e}", fg="red"))
+            return
             click.echo(
                 click.style("❌ There was an issue with the installation.", fg="red")
             )
