@@ -1,0 +1,36 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches:
+      - main
+      - feature/**
+  pull_request:
+    branches:
+      - main
+      - feature/**
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+
+      - name: Set up Python environment
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8' # Replace with the required Python version
+
+      - name: Install dependencies
+        run: python cli.py setup
+
+      - name: Run tests with pytest
+        env:
+          CI: true
+        run: |
+          pytest -vv
+          if [ $? -ne 0 ]; then
+            echo "Tests failed. Printing logs..."
+            # Add commands to print logs if needed
+          fi
