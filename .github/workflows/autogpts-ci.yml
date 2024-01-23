@@ -58,6 +58,15 @@ jobs:
           cd autogpts/${{ matrix.agent-name }}
           poetry run agbenchmark --mock
           poetry run agbenchmark --test=WriteFile
+
+      - name: Check for errors
+        shell: bash
+        run: |
+          if [ $? -ne 0 ]; then
+            echo "Tests failed. Printing logs..."
+            cat path/to/logfile.log
+            exit 1
+          fi
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           AGENT_NAME: ${{ matrix.agent-name }}
