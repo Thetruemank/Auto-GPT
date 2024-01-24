@@ -64,17 +64,21 @@ d88P     888  "Y88888  "Y888 "Y88P"   "Y8888P88 888           888
         install_error = True
 
     try:
-        # Check if git user is configured
-        user_name = (
-            subprocess.check_output(["git", "config", "user.name"])
-            .decode("utf-8")
-            .strip()
-        )
-        user_email = (
-            subprocess.check_output(["git", "config", "user.email"])
-            .decode("utf-8")
-            .strip()
-        )
+        if os.environ.get("CI"):  # Skip Git config check if in CI environment
+            user_name = 'CI'
+            user_email = 'CI'
+        else:
+            # Check if git user is configured
+            user_name = (
+                subprocess.check_output(["git", "config", "user.name"])
+                .decode("utf-8")
+                .strip()
+            )
+            user_email = (
+                subprocess.check_output(["git", "config", "user.email"])
+                .decode("utf-8")
+                .strip()
+            )
 
         if user_name and user_email:
             click.echo(
@@ -112,10 +116,12 @@ d88P     888  "Y88888  "Y888 "Y88P"   "Y8888P88 888           888
     print_access_token_instructions = False
 
     # Check for the existence of the .github_access_token file
-    if os.path.exists(".github_access_token"):
+    if os.environ.get("CI"):  # Use CI provided GitHub token if in CI environment
+        github_access_token = os.environ.get("GITHUB_TOKEN")
+    elif os.path.exists(".github_access_token"):
         with open(".github_access_token", "r") as file:
             github_access_token = file.read().strip()
-            if github_access_token:
+            if github_access_token and not os.environ.get("CI"):
                 click.echo(
                     click.style(
                         "✅ GitHub access token loaded successfully.", fg="green"
@@ -126,7 +132,7 @@ d88P     888  "Y88888  "Y888 "Y88P"   "Y8888P88 888           888
 
                 headers = {"Authorization": f"token {github_access_token}"}
                 response = requests.get("https://api.github.com/user", headers=headers)
-                if response.status_code == 200:
+                if response.status_code == 200 and not os.environ.get("CI"):
                     scopes = response.headers.get("X-OAuth-Scopes")
                     if "public_repo" in scopes or "repo" in scopes:
                         click.echo(
@@ -167,7 +173,7 @@ d88P     888  "Y88888  "Y888 "Y88P"   "Y8888P88 888           888
         install_error = True
         print_access_token_instructions = True
 
-    if print_access_token_instructions:
+    if print_access_token_instructions and not os.environ.get("CI"):
         # Instructions to set up GitHub access token
         click.echo(
             click.style(
