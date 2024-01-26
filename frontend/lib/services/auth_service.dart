@@ -34,7 +34,7 @@ class AuthService {
       final GithubAuthProvider provider = GithubAuthProvider();
       return await _auth.signInWithPopup(provider);
     } catch (e) {
-      print("Error during GitHub Sign-In: $e");
+      print("Error during GitHub Sign-In: \\(e.runtimeType} - \\$e\\n\\$e.stackTrace");
       return null;
     }
   }
