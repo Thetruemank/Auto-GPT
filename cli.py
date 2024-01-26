@@ -136,6 +136,8 @@ d88P     888  "Y88888  "Y888 "Y88P"   "Y8888P88 888           888
                             )
                         )
                     else:
+                        print(f"GitHub API response status code: {response.status_code}")
+                        print(f"GitHub API response: {response.text}")
                         install_error = True
                         click.echo(
                             click.style(
