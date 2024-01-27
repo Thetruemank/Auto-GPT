@@ -13,26 +13,35 @@ from poetry.factory import Factory
 
 
 def main():
-    poetry_project = Factory().create_poetry()
-    dependency_group = poetry_project.package.dependency_group("main")
+    try:
+        poetry_project = Factory().create_poetry()
+        dependency_group = poetry_project.package.dependency_group("main")
 
-    missing_packages = []
-    for dep in dependency_group.dependencies:
-        if dep.is_optional():
-            continue
-        # Try to verify that the installed version is suitable
-        with contextlib.suppress(ModuleNotFoundError):
-            installed_version = version(dep.name)  # if this fails -> not installed
-            if dep.constraint.allows(Version.parse(installed_version)):
+        missing_packages = []
+        for dep in dependency_group.dependencies:
+            if dep.is_optional():
                 continue
-        # If the above verification fails, mark the package as missing
-        missing_packages.append(str(dep))
+            # Try to verify that the installed version is suitable
+            with contextlib.suppress(ModuleNotFoundError):
+                installed_version = version(dep.name)  # if this fails -> not installed
+                if dep.constraint.allows(Version.parse(installed_version)):
+                    continue
+            # If the above verification fails, mark the package as missing
+            missing_packages.append(str(dep))
 
-    if missing_packages:
-        print("Missing packages:")
-        print(", ".join(missing_packages))
-        sys.exit(1)
+        if missing_packages:
+            print("Missing packages:")
+            print(", ".join(missing_packages))
+            sys.exit(1)
+    except Exception as e:
+        print(f'An unexpected error occurred: {e}')
+        sys.exit(2)
+    else:
+        print('All dependencies are installed.')
+        return 0
 
 
+        print('All dependencies are installed.')
+        return 0
 if __name__ == "__main__":
     main()
