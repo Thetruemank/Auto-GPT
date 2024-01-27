@@ -43,6 +43,14 @@ def install_plugin_dependencies():
                 continue
 
             logger.debug(f"Installing dependencies from '{basereqs}'...")
+            try:
+                subprocess.check_call(
+                    [sys.executable, "-m", "pip", "install", "-r", extracted],
+                    stdout=subprocess.DEVNULL
+                )
+            except subprocess.CalledProcessError as e:
+                logger.error(f'Installation failed for dependencies described in {basereqs}: {e}')
+                sys.exit(e.returncode)
             subprocess.check_call(
                 [sys.executable, "-m", "pip", "install", "-r", extracted]
             )
@@ -54,10 +62,14 @@ def install_plugin_dependencies():
     # Install directory-based plugins
     for requirements_file in glob(f"{plugins_dir}/*/requirements.txt"):
         logger.debug(f"Installing dependencies from '{requirements_file}'...")
-        subprocess.check_call(
-            [sys.executable, "-m", "pip", "install", "-r", requirements_file],
-            stdout=subprocess.DEVNULL,
-        )
+        try:
+            subprocess.check_call(
+                [sys.executable, "-m", "pip", "install", "-r", requirements_file],
+                stdout=subprocess.DEVNULL
+            )
+        except subprocess.CalledProcessError as e:
+            logger.error(f'Installation failed for requirements.txt in plugin folder: {requirements_file}, {e}')
+            sys.exit(e.returncode)
 
     logger.debug("Finished installing plugin dependencies")
 
