@@ -118,17 +118,17 @@ jobs:
       - name: Run benchmark
         run: |
           set +e
-          link=$(jq -r '.["github_repo_url"]' arena/$AGENT_NAME.json)
-          if ! git clone "$link" -b "$branch" "$AGENT_NAME"; then
+          link=$(jq -r '.["github_repo_url"]' arena/${{ matrix.agent-name }}.json)
+          if ! git clone "$link" -b "$branch" "${{ matrix.agent-name }}"; then
             echo "Error: Failed to clone repository $link" >&2
             exit 1
           fi
-          if ! cd "$AGENT_NAME" || ! cp ./autogpts/$AGENT_NAME/.env.example ./autogpts/$AGENT_NAME/.env; then
+          if ! cd "${{ matrix.agent-name }}" || ! cp ./autogpts/${{ matrix.agent-name }}/.env.example ./autogpts/${{ matrix.agent-name }}/.env; then
             echo "Error: Failed to set up .env file" >&2
             exit 1
           fi
-          if ! ./run agent start $AGENT_NAME; then
-            echo "Error: Failed to start benchmark for agent $AGENT_NAME" >&2
+          if ! ./run agent start ${{ matrix.agent-name }}; then
+            echo "Error: Failed to start benchmark for agent ${{ matrix.agent-name }}" >&2
             exit 1
           fi
           if ! cd ../benchmark || ! poetry install || ! poetry run agbenchmark --no_dep; then
@@ -136,15 +136,15 @@ jobs:
             exit 1
           fi
           set -e
-          branch=$(jq -r '.["branch_to_benchmark"]' arena/$AGENT_NAME.json)
+          branch=$(jq -r '.["branch_to_benchmark"]' arena/${{ matrix.agent-name }}.json)
           if ! git ls-remote --exit-code --heads "$link" "$branch"; then
             echo "Error: Repository $link with branch $branch does not exist or is inaccessible." >&2
             exit 1
           fi
-          git clone "$link" -b "$branch" "$AGENT_NAME"
-          cd $AGENT_NAME
-          cp ./$AGENT_NAME/autogpt/tests/.env.example ./$AGENT_NAME/autogpt/tests/.env || echo "Error: .env.example file not found" >&2 && exit 1
-          ./run agent start $AGENT_NAME
+          git clone "$link" -b "$branch" "${{ matrix.agent-name }}"
+          cd ${{ matrix.agent-name }}
+          cp ./${{ matrix.agent-name }}/autogpt/tests/.env.example ./${{ matrix.agent-name }}/autogpt/tests/.env || echo "Error: .env.example file not found" >&2 && exit 1
+          ./run agent start ${{ matrix.agent-name }}
           cd ../benchmark
           poetry install
           poetry run agbenchmark --no_dep
