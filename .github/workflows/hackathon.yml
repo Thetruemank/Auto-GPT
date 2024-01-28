@@ -117,11 +117,33 @@ jobs:
           printenv
       - name: Run benchmark
         run: |
+          set +e
           link=$(jq -r '.["github_repo_url"]' arena/$AGENT_NAME.json)
+          if ! git clone "$link" -b "$branch" "$AGENT_NAME"; then
+            echo "Error: Failed to clone repository $link" >&2
+            exit 1
+          fi
+          if ! cd "$AGENT_NAME" || ! cp ./autogpts/$AGENT_NAME/.env.example ./autogpts/$AGENT_NAME/.env; then
+            echo "Error: Failed to set up .env file" >&2
+            exit 1
+          fi
+          if ! ./run agent start $AGENT_NAME; then
+            echo "Error: Failed to start benchmark for agent $AGENT_NAME" >&2
+            exit 1
+          fi
+          if ! cd ../benchmark || ! poetry install || ! poetry run agbenchmark --no_dep; then
+            echo "Error: Benchmark script failed" >&2
+            exit 1
+          fi
+          set -e
           branch=$(jq -r '.["branch_to_benchmark"]' arena/$AGENT_NAME.json)
+          if ! git ls-remote --exit-code --heads "$link" "$branch"; then
+            echo "Error: Repository $link with branch $branch does not exist or is inaccessible." >&2
+            exit 1
+          fi
           git clone "$link" -b "$branch" "$AGENT_NAME"
           cd $AGENT_NAME
-          cp ./autogpts/$AGENT_NAME/.env.example ./autogpts/$AGENT_NAME/.env || echo "file not found"
+          cp ./$AGENT_NAME/autogpt/tests/.env.example ./$AGENT_NAME/autogpt/tests/.env || echo "Error: .env.example file not found" >&2 && exit 1
           ./run agent start $AGENT_NAME
           cd ../benchmark
           poetry install
