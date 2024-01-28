@@ -43,6 +43,7 @@ jobs:
             matrix_string="[ \"$(echo "${matrix_array[@]}" | sed 's/ /", "/g')\" ]"
             echo "::set-output name=env-name::production"
             echo "::set-output name=matrix::$matrix_string"
+          echo "Matrix Setup: $matrix_string"
           else
             echo "::set-output name=env-name::testing"
             echo "::set-output name=matrix::[ 'irrelevant' ]"
@@ -111,6 +112,9 @@ jobs:
         with:
           node-version: v18.15
 
+      - name: Print Environment Variables
+        run: |
+          printenv
       - name: Run benchmark
         run: |
           link=$(jq -r '.["github_repo_url"]' arena/$AGENT_NAME.json)
