@@ -160,7 +160,7 @@ jobs:
           poetry run pytest -vv \
             --cov=autogpt --cov-branch --cov-report term-missing --cov-report xml \
             --numprocesses=logical --durations=10 \
-            tests/unit tests/integration
+            tests/unit tests/integration 2>&1 | tee pytest.log
         env:
           CI: true
           PLAIN_OUTPUT: True
@@ -247,4 +247,6 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: test-logs
-          path: autogpts/autogpt/logs/
+          path: |
+            pytest.log
+            autogpts/autogpt/logs/**
