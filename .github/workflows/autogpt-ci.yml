@@ -247,4 +247,6 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: test-logs
-          path: autogpts/autogpt/logs/
+          path: |
+            pytest.log
+            autogpts/autogpt/logs/**
