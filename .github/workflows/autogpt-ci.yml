@@ -61,6 +61,14 @@ jobs:
         run: poetry run black . --check
         if: success() || failure()
 
+      - name: Capture and upload logs to artifact
+        if: failure()
+        run: bash .github/scripts/capture-logs.sh
+        uses: actions/upload-artifact@v3
+        with:
+          name: lint-logs
+          path: action-logs.txt
+
       - name: Check isort formatting
         run: poetry run isort . --check
         if: success() || failure()
@@ -242,9 +250,18 @@ jobs:
             gh issue comment $PR_NUMBER --body "You changed AutoGPT's behaviour. The cassettes have been updated and will be merged to the submodule when this Pull Request gets merged."
           fi
 
-      - name: Upload logs to artifact
+      - name: Capture and upload logs to artifact
         if: always()
+        run: bash .github/scripts/capture-logs.sh
         uses: actions/upload-artifact@v3
         with:
           name: test-logs
-          path: autogpts/autogpt/logs/
+          path: action-logs.txt
+
+      - name: Capture and upload logs to artifact on failure
+        if: failure()
+        run: bash .github/scripts/capture-logs.sh
+        uses: actions/upload-artifact@v3
+        with:
+          name: failure-logs
+          path: action-logs.txt
