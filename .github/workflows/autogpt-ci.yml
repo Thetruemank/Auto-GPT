@@ -61,6 +61,14 @@ jobs:
         run: poetry run black . --check
         if: success() || failure()
 
+      - name: Capture and upload logs to artifact
+        if: failure()
+        run: bash .github/scripts/capture-logs.sh
+        uses: actions/upload-artifact@v3
+        with:
+          name: lint-logs
+          path: action-logs.txt
+
       - name: Check isort formatting
         run: poetry run isort . --check
         if: success() || failure()
