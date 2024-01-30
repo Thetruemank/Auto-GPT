@@ -242,9 +242,10 @@ jobs:
             gh issue comment $PR_NUMBER --body "You changed AutoGPT's behaviour. The cassettes have been updated and will be merged to the submodule when this Pull Request gets merged."
           fi
 
-      - name: Upload logs to artifact
+      - name: Capture and upload logs to artifact
         if: always()
+        run: bash .github/scripts/capture-logs.sh
         uses: actions/upload-artifact@v3
         with:
           name: test-logs
-          path: autogpts/autogpt/logs/
+          path: action-logs.txt
