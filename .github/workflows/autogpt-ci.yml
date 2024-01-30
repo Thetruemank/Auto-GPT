@@ -257,3 +257,11 @@ jobs:
         with:
           name: test-logs
           path: action-logs.txt
+
+      - name: Capture and upload logs to artifact on failure
+        if: failure()
+        run: bash .github/scripts/capture-logs.sh
+        uses: actions/upload-artifact@v3
+        with:
+          name: failure-logs
+          path: action-logs.txt
