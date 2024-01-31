@@ -155,9 +155,21 @@ jobs:
           curl -sSL https://install.python-poetry.org | python3 -
           poetry install
 
-      - name: Run pytest with coverage
+      - name: Print debug information
         run: |
-          poetry run pytest -vv \
+          echo "Environment Variables:"
+          env | sort
+          echo "System Information:"
+          uname -a
+          echo "Python Version:"
+          python --version
+          echo "Poetry Version:"
+          poetry --version
+
+      - name: Run pytest with coverage and enhanced logging
+        run: |
+          poetry run pytest -vv -ra \
+            --log-cli-level=INFO \
             --cov=autogpt --cov-branch --cov-report term-missing --cov-report xml \
             --numprocesses=logical --durations=10 \
             tests/unit tests/integration
