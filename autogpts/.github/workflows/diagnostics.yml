@@ -1,0 +1,38 @@
+name: Diagnostics
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *'  # Runs at 00:00 UTC every day
+
+jobs:
+  diagnostics:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+
+      - name: Print Environment Variables
+        run: |
+          echo "CI Environment: $CI"
+          echo "GitHub Reference: $GITHUB_REF"
+
+      - name: Print Python Version
+        run: python --version
+
+      - name: Print pip Version
+        run: pip --version
+
+      - name: List installed pip packages
+        run: pip list
+
+      - name: Print Working Directory
+        run: pwd
+
+      - name: List Files in Project Root
+        run: ls -lah
