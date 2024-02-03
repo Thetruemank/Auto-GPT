@@ -137,6 +137,7 @@ d88P     888  "Y88888  "Y888 "Y88P"   "Y8888P88 888           888
                         )
                     else:
                         install_error = True
+                        click.echo(f"Actual scopes present in the GitHub token: {scopes}")
                         click.echo(
                             click.style(
                                 "❌ GitHub access token does not have the required permissions. Please ensure it has 'public_repo' or 'repo' scope.",
@@ -145,6 +146,7 @@ d88P     888  "Y88888  "Y888 "Y88P"   "Y8888P88 888           888
                         )
                 else:
                     install_error = True
+                    click.echo(f"GitHub token validation failed with status code: {response.status_code}")
                     click.echo(
                         click.style(
                             "❌ Failed to validate GitHub access token. Please ensure it is correct.",
