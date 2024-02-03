@@ -4,6 +4,7 @@ import pytest
 
 
 def skip_in_ci(test_function):
+    print(f"Skipping {test_function.__name__} in CI environment.")
     return pytest.mark.skipif(
         os.environ.get("CI") == "true",
         reason="This test doesn't work on GitHub Actions.",
