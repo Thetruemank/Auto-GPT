@@ -144,10 +144,12 @@ d88P     888  "Y88888  "Y888 "Y88P"   "Y8888P88 888           888
                             )
                         )
                 else:
+                    if "bad credentials" in response.json().get("message", "").lower():
+                        click.echo(click.style("❌ The GitHub access token provided is invalid. Please check the token and try again.", fg="red"))
                     install_error = True
                     click.echo(
                         click.style(
-                            "❌ Failed to validate GitHub access token. Please ensure it is correct.",
+                            "❌ Failed to validate GitHub access token. Please ensure it is correct.", 
                             fg="red",
                         )
                     )

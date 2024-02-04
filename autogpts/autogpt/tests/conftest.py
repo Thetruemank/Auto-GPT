@@ -157,3 +157,8 @@ def agent(
     )
     agent.attach_fs(agent_data_dir)
     return agent
+
+@pytest.fixture(autouse=True)
+def mock_external_apis(monkeypatch):
+    from unittest.mock import MagicMock
+    monkeypatch.setattr('external_api_call_module.external_api_call_function', MagicMock(return_value=True))
