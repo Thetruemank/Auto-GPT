@@ -33,8 +33,11 @@ class AuthService {
     try {
       final GithubAuthProvider provider = GithubAuthProvider();
       return await _auth.signInWithPopup(provider);
+    } on FirebaseAuthException catch (authException) {
+      print("Authentication Error: ${authException.message}");
+      return null;
     } catch (e) {
-      print("Error during GitHub Sign-In: $e");
+      print("Unknown Error during GitHub Sign-In: $e");
       return null;
     }
   }
