@@ -6,6 +6,14 @@ To ensure efficiency, add the imports to the functions so only what is needed is
 """
 try:
     import click
+    from github import Github, BadCredentialsException, UnknownObjectException, GithubException
+
+# Ensure the GitHub library is correctly imported and handle potential import exceptions.
+try:
+    from github import Github, BadCredentialsException, UnknownObjectException, GithubException
+except ImportError:
+    os.system("pip3 install PyGithub")
+    from github import Github, BadCredentialsException, UnknownObjectException, GithubException
     import github
 except ImportError:
     import os
@@ -115,6 +123,9 @@ d88P     888  "Y88888  "Y888 "Y88P"   "Y8888P88 888           888
     if os.path.exists(".github_access_token"):
         with open(".github_access_token", "r") as file:
             github_access_token = file.read().strip()
+    else:
+        click.echo(click.style("❌ GitHub access token file '.github_access_token' not found. Ensure the file exists and contains your access token.", fg="red"))
+        return
             if github_access_token:
                 click.echo(
                     click.style(
@@ -605,7 +616,13 @@ def enter(agent_name, branch):
     import subprocess
     from datetime import datetime
 
-    from github import Github
+    # Ensure GitHub interactions are correctly handled with appropriate exceptions
+    from github import Github, GithubException
+    try:
+        from github import Github, GithubException
+    except ImportError:
+        os.system("pip3 install PyGithub")
+        from github import Github, GithubException
 
     # Check if the agent_name directory exists in the autogpts directory
     agent_dir = f"./autogpts/{agent_name}"
@@ -751,7 +768,15 @@ def enter(agent_name, branch):
         subprocess.check_call(["git", "push", "origin", arena_submission_branch])
 
         # Create a PR into the parent repository
-        g = Github(github_access_token)
+        try:
+            g = Github(github_access_token)
+            user = g.get_user()
+        except BadCredentialsException:
+            click.echo(click.style("❌ Invalid GitHub access token. Please ensure the token is correct and has the necessary permissions.", fg="red"))
+            return
+        except GithubException as e:
+            click.echo(click.style(f"❌ An error occurred while accessing GitHub API: {e}", fg="red"))
+            return
         repo_name = github_repo_url.replace("https://github.com/", '')
         repo = g.get_repo(repo_name)
         parent_repo = repo.parent
