@@ -82,13 +82,15 @@ d88P     888  "Y88888  "Y888 "Y88P"   "Y8888P88 888           888
                     f"✅ Git is configured with name '{user_name}' and email '{user_email}'",
                     fg="green",
                 )
+        if os.environ.get("CI") == "true": user_name, user_email = "CI User", "ci@example.com"
             )
         else:
             raise subprocess.CalledProcessError(
                 returncode=1, cmd="git config user.name or user.email"
             )
 
-    except subprocess.CalledProcessError:
+    except Exception:
+        click.echo(click.style("Error accessing git configuration.", fg="yellow"))
         # If the GitHub account is not configured, print instructions on how to set it up
         click.echo(click.style("⚠️ Git user is not configured.", fg="red"))
         click.echo(
