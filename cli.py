@@ -1,18 +1,13 @@
 """
 This is a minimal file intended to be run by users to help them manage the autogpt projects.
 
+Please ensure a `requirements.txt` file is created at the root of this project. This file should include `click`, `PyGithub`, and any other necessary packages.
+
 If you want to contribute, please use only libraries that come as part of Python.
 To ensure efficiency, add the imports to the functions so only what is needed is imported.
 """
-try:
-    import click
-    import github
-except ImportError:
-    import os
-
-    os.system("pip3 install click")
-    os.system("pip3 install PyGithub")
-    import click
+import click
+import github
 
 
 @click.group()
