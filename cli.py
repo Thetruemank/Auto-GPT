@@ -139,9 +139,17 @@ d88P     888  "Y88888  "Y888 "Y88P"   "Y8888P88 888           888
                         install_error = True
                         click.echo(
                             click.style(
-                                "❌ GitHub access token does not have the required permissions. Please ensure it has 'public_repo' or 'repo' scope.",
+                                "❌ GitHub access token does not have the required permissions (Missing 'public_repo' or 'repo' scope).",
                                 fg="red",
                             )
+                        )
+                        # Detailed error added for diagnostic purposes
+                        click.echo(
+                            click.style(
+                                f"⚠️ Detailed Error: Status Code: {response.status_code}, Scope: '{scopes}' (Expected 'public_repo' or 'repo').",
+                                fg="yellow",
+                            )
+                        )
                         )
                 else:
                     install_error = True
