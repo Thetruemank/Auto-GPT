@@ -58,14 +58,14 @@ jobs:
           poetry install
 
       - name: Lint with flake8
-        run: poetry run flake8
+        run: poetry run flake8 autogpts/autogpt
 
       - name: Check black formatting
-        run: poetry run black . --check
+        run: poetry run black autogpts/autogpt --check
         if: success() || failure()
 
       - name: Check isort formatting
-        run: poetry run isort . --check
+        run: poetry run isort autogpts/autogpt --check
         if: success() || failure()
 
       # - name: Check mypy formatting
