@@ -34,10 +34,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Set up Python ${{ env.min-python-version }}
+      - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: ${{ env.min-python-version }}
+          python-version: ${{ matrix.python-version }}
 
       - id: get_date
         name: Get date
@@ -51,18 +51,21 @@ jobs:
 
       - name: Install Python dependencies
         run: |
-          curl -sSL https://install.python-poetry.org | python3 -
+          if ! command -v poetry &> /dev/null
+          then
+              curl -sSL https://install.python-poetry.org | python3 -
+          fi
           poetry install
 
       - name: Lint with flake8
-        run: poetry run flake8
+        run: poetry run flake8 autogpts/autogpt
 
       - name: Check black formatting
-        run: poetry run black . --check
+        run: poetry run black autogpts/autogpt --check
         if: success() || failure()
 
       - name: Check isort formatting
-        run: poetry run isort . --check
+        run: poetry run isort autogpts/autogpt --check
         if: success() || failure()
 
       # - name: Check mypy formatting
@@ -152,15 +155,18 @@ jobs:
 
       - name: Install Python dependencies
         run: |
-          curl -sSL https://install.python-poetry.org | python3 -
+          if ! command -v poetry &> /dev/null
+          then
+              curl -sSL https://install.python-poetry.org | python3 -
+          fi
           poetry install
 
       - name: Run pytest with coverage
         run: |
           poetry run pytest -vv \
-            --cov=autogpt --cov-branch --cov-report term-missing --cov-report xml \
-            --numprocesses=logical --durations=10 \
-            tests/unit tests/integration
+            --cov=autogpts/autogpt --cov-branch --cov-report term-missing --cov-report xml \
+            --numprocesses=auto --durations=10 \
+            autogpts/autogpt/tests
         env:
           CI: true
           PLAIN_OUTPUT: True
@@ -192,7 +198,7 @@ jobs:
       - id: push_cassettes
         name: Push updated cassettes
         # For pull requests, push updated cassettes even when tests fail
-        if: github.event_name == 'push' || (! github.event.pull_request.head.repo.fork && (success() || failure()))
+        if: github.event_name == 'push' || (github.event_name == 'pull_request' && ! github.event.pull_request.head.repo.fork && (success() || failure()))
         env:
           PR_BRANCH: ${{ github.event.pull_request.head.ref }}
           PR_AUTHOR: ${{ github.event.pull_request.user.login }}
