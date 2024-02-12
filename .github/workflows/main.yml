@@ -1,0 +1,27 @@
+name: Main CI Workflow
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  setup-and-test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Setup Git
+      run: |
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "actions@github.com"
+
+    - name: Set Environment Variables
+      run: echo "SKIP_SPECIFIC_TESTS=true" >> $GITHUB_ENV
+
+    - name: Install Dependencies
+      run: |
+        pip install -r requirements.txt
+
+    - name: Run Tests
+      run: |
+        pytest
