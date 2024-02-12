@@ -34,7 +34,12 @@ class AuthService {
       final GithubAuthProvider provider = GithubAuthProvider();
       return await _auth.signInWithPopup(provider);
     } catch (e) {
-      print("Error during GitHub Sign-In: $e");
+      // Enhanced error handling for CI environments
+      if (Platform.environment.containsKey('CI')) {
+        print("CI environment detected. Error during GitHub Sign-In: $e");
+      } else {
+        print("Error during GitHub Sign-In: $e");
+      }
       return null;
     }
   }
