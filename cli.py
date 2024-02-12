@@ -123,9 +123,16 @@ d88P     888  "Y88888  "Y888 "Y88P"   "Y8888P88 888           888
                 )
                 # Check if the token has the required permissions
                 import requests
+                import os
+
+                is_ci = os.environ.get('CI') == 'true'
 
                 headers = {"Authorization": f"token {github_access_token}"}
                 response = requests.get("https://api.github.com/user", headers=headers)
+                if is_ci and response.status_code == 401:
+                    click.echo(click.style("❌ Unauthorized: The GitHub access token used does not have the correct permissions or is invalid.", fg="red"))
+                    click.echo(click.style("🔍 In CI environments, ensure the token has 'repo' scope and is correctly configured.", fg="yellow"))
+                    return
                 if response.status_code == 200:
                     scopes = response.headers.get("X-OAuth-Scopes")
                     if "public_repo" in scopes or "repo" in scopes:
@@ -136,7 +143,8 @@ d88P     888  "Y88888  "Y888 "Y88P"   "Y8888P88 888           888
                             )
                         )
                     else:
-                        install_error = True
+                        if not is_ci:
+                            install_error = True
                         click.echo(
                             click.style(
                                 "❌ GitHub access token does not have the required permissions. Please ensure it has 'public_repo' or 'repo' scope.",
