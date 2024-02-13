@@ -252,7 +252,8 @@ def create(agent_name):
                 )
             )
     except Exception as e:
-        click.echo(click.style(f"😢 An error occurred: {e}", fg="red"))
+        print(f"Error during GitHub Sign-In: {type(e).__name__}, {str(e)}")
+        return null
 
 
 @agent.command()
@@ -344,6 +345,8 @@ def list():
     except FileNotFoundError:
         click.echo(click.style("The autogpts directory does not exist 😢", fg="red"))
     except Exception as e:
+        print(f"Error during GitHub Sign-In: {type(e).__name__}, {str(e)}")
+        return null
         click.echo(click.style(f"An error occurred: {e} 😢", fg="red"))
 
 
@@ -818,7 +821,8 @@ Hey there amazing builders! We're thrilled to have you join this exciting journe
         subprocess.check_call(["git", "checkout", branch_to_use])
 
     except Exception as e:
-        click.echo(click.style(f"❌ An error occurred: {e}", fg="red"))
+        print(f"Error during GitHub Sign-In: {type(e).__name__}, {str(e)}")
+        return null
         # Switch back to the master branch
         subprocess.check_call(["git", "checkout", branch_to_use])
 
