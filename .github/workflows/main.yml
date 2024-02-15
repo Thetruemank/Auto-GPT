@@ -1,0 +1,41 @@
+name: .github/workflows/main.yml
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+      - name: Install dependencies
+        run: |
+          pip install click PyGithub
+      - name: Configure GitHub credentials
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "GITHUB_TOKEN=${GITHUB_TOKEN}" > .github_access_token
+      - name: Run backend tests
+        run: |
+          python -m pytest
+
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v1
+        with:
+          flutter-version: '2.2.3'
+      - name: Install Flutter dependencies
+        run: flutter pub get
+      - name: Run frontend tests
+        run: flutter test

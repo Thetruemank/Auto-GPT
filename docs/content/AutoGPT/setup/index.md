@@ -109,6 +109,10 @@ Once you have cloned or downloaded the project, you can find the AutoGPT Agent i
 
         Details can be found in the [openai-python docs], and in the [Azure OpenAI docs] for the embedding model.
         If you're on Windows you may need to install an [MSVC library](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170).
+6. For GitHub Actions, securely store your `OPENAI_API_KEY` and any other sensitive information as [GitHub Secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets). In your GitHub repository, go to Settings > Secrets and click on "New repository secret". Name your secret (e.g., `OPENAI_API_KEY`) and paste the API key value. Use these secrets in your GitHub Actions workflow files by referencing them with `${{ secrets.SECRET_NAME }}`.
+
+    !!! caution "Never hard-code sensitive information"
+        Always use GitHub Secrets for storing sensitive information like API keys or tokens in your GitHub Actions workflows. Hard-coding such information in your workflow files can lead to security vulnerabilities.
 
 6. Enter any other API keys or tokens for services you would like to use.
 
@@ -125,3 +129,18 @@ See the [user guide](../usage.md) for further instructions.
 
 [show hidden files/Windows]: https://support.microsoft.com/en-us/windows/view-hidden-files-and-folders-in-windows-97fbc472-c603-9d90-91d0-1166d1d9f4b5
 [show hidden files/macOS]: https://www.pcmag.com/how-to/how-to-access-your-macs-hidden-files
+## Troubleshooting GitHub Actions
+
+If you encounter issues with GitHub Actions workflows, consider the following troubleshooting steps:
+
+1. **Check for syntax errors in your workflow files:** Ensure that your `.github/workflows/*.yml` files are correctly formatted and free of syntax errors. You can use online YAML validators to check your files.
+
+2. **Verify GitHub Secrets:** Ensure that all required secrets, such as `OPENAI_API_KEY`, are correctly set up in your repository's settings and are being correctly referenced in your workflow files.
+
+3. **Review the GitHub Actions logs:** GitHub provides detailed logs for each step of your workflow runs. Review these logs for any error messages or warnings that can help identify the issue.
+
+4. **Check for rate limits:** If your workflows interact with external APIs (e.g., OpenAI API), ensure you're not hitting any rate limits. Consider implementing retry logic or adjusting the frequency of workflow runs.
+
+5. **Seek help:** If you're unable to resolve the issue, consider seeking help from the GitHub community or the GitHub support team. You can also check the [GitHub Actions documentation](https://docs.github.com/en/actions) for more guidance.
+
+Remember, the key to effectively troubleshooting GitHub Actions is to methodically check each part of your workflow and configuration for potential issues.
