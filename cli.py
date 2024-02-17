@@ -148,13 +148,22 @@ else:
                             )
                         )
                 else:
-                    install_error = True
-                    click.echo(
-                        click.style(
-                            "❌ Failed to validate GitHub access token. Please ensure it is correct.",
-                            fg="red",
+                    if os.environ.get("GITHUB_ACTIONS") == "true":
+                        install_error = True
+                        click.echo(
+                            click.style(
+                                "❌ Failed to validate GitHub access token in GitHub Actions. Please check the secrets configuration and ensure the token is correctly set up in the repository's secrets.",
+                                fg="red",
+                            )
                         )
-                    )
+                    else:
+                        install_error = True
+                        click.echo(
+                            click.style(
+                                "❌ Failed to validate GitHub access token. Please ensure it is correct.",
+                                fg="red",
+                            )
+                        )
             else:
                 install_error = True
                 click.echo(
