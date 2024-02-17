@@ -7,6 +7,7 @@ To ensure efficiency, add the imports to the functions so only what is needed is
 try:
     import click
     import github
+    import os
 except ImportError:
     import os
 
@@ -89,6 +90,7 @@ d88P     888  "Y88888  "Y888 "Y88P"   "Y8888P88 888           888
             )
 
     except subprocess.CalledProcessError:
+if not os.environ.get("GITHUB_ACTIONS") == "true":
         # If the GitHub account is not configured, print instructions on how to set it up
         click.echo(click.style("⚠️ Git user is not configured.", fg="red"))
         click.echo(
@@ -128,6 +130,8 @@ d88P     888  "Y88888  "Y888 "Y88P"   "Y8888P88 888           888
                 response = requests.get("https://api.github.com/user", headers=headers)
                 if response.status_code == 200:
                     scopes = response.headers.get("X-OAuth-Scopes")
+else:
+    print_access_token_instructions = False
                     if "public_repo" in scopes or "repo" in scopes:
                         click.echo(
                             click.style(
