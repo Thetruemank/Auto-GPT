@@ -10,8 +10,16 @@ try:
 except ImportError:
     import os
 
-    os.system("pip3 install click")
-    os.system("pip3 install PyGithub")
+    try:
+        import click
+    except ImportError:
+        subprocess.check_call(["pip3", "install", "click"])
+        import click
+    try:
+        import github
+    except ImportError:
+        subprocess.check_call(["pip3", "install", "PyGithub"])
+        import github
     import click
 
 
@@ -59,6 +67,20 @@ d88P     888  "Y88888  "Y888 "Y88P"   "Y8888P88 888           888
         click.echo(
             click.style(
                 "❌ Error: setup.sh does not exist in the current directory.", fg="red"
+    required_env_vars = ["GITHUB_TOKEN", "GIT_USER", "GIT_EMAIL"]
+    missing_env_vars = [var for var in required_env_vars if not os.getenv(var)]
+    if missing_env_vars:
+        click.echo(click.style(f"❌ Missing required environment variables: {', '.join(missing_env_vars)}", fg="red"))
+        return
+    try:
+        import click
+        import github
+    except ImportError:
+        click.echo(click.style("Checking for required dependencies...", fg="yellow"))
+        subprocess.check_call(["pip3", "install", "click"])
+        subprocess.check_call(["pip3", "install", "PyGithub"])
+        import click
+        import github
             )
         )
         install_error = True
@@ -147,7 +169,7 @@ d88P     888  "Y88888  "Y888 "Y88P"   "Y8888P88 888           888
                     install_error = True
                     click.echo(
                         click.style(
-                            "❌ Failed to validate GitHub access token. Please ensure it is correct.",
+                            f"❌ Failed to validate GitHub access token with status code {response.status_code} and response: {response.text}. Please ensure it is correct.",
                             fg="red",
                         )
                     )
