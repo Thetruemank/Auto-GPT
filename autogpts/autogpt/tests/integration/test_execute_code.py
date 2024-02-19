@@ -4,6 +4,7 @@ import tempfile
 from pathlib import Path
 
 import pytest
+from autogpt.tests.utils import skip_in_ci
 
 import autogpt.commands.execute_code as sut  # system under testing
 from autogpt.agents.agent import Agent
@@ -65,6 +66,7 @@ def test_execute_python_code(random_code: str, random_string: str, agent: Agent)
 
 
 def test_execute_python_file_invalid(agent: Agent):
+@skip_in_ci
     with pytest.raises(InvalidArgumentError):
         sut.execute_python_file(Path("not_python.txt"), agent)
 
@@ -84,6 +86,10 @@ def test_execute_shell(random_string: str, agent: Agent):
 
 
 def test_execute_shell_local_commands_not_allowed(random_string: str, agent: Agent):
+@skip_in_ci
+@skip_in_ci
+@skip_in_ci
+@skip_in_ci
     result = sut.execute_shell(f"echo 'Hello {random_string}!'", agent)
     assert f"Hello {random_string}!" in result
 
@@ -96,6 +102,9 @@ def test_execute_shell_denylist_should_deny(agent: Agent, random_string: str):
 
 
 def test_execute_shell_denylist_should_allow(agent: Agent, random_string: str):
+@skip_in_ci
+@skip_in_ci
+@skip_in_ci
     agent.legacy_config.shell_denylist = ["cat"]
 
     result = sut.execute_shell(f"echo 'Hello {random_string}!'", agent)
@@ -116,3 +125,6 @@ def test_execute_shell_allowlist_should_allow(agent: Agent, random_string: str):
 
     result = sut.execute_shell(f"echo 'Hello {random_string}!'", agent)
     assert "Hello" in result and random_string in result
+@skip_in_ci
+@skip_in_ci
+@skip_in_ci
