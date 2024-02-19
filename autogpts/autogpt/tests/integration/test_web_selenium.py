@@ -18,3 +18,5 @@ async def test_browse_website_nonexistent_url(
 
         # Sanity check that the response is not too long
         assert len(raised.exconly()) < 200
+from autogpt.tests.utils import skip_in_ci
+        assert len(raised.exconly()) < 200
