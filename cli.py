@@ -689,9 +689,11 @@ def enter(agent_name, branch):
         return
 
     try:
-        # Load GitHub access token from file
-        with open(".github_access_token", "r") as file:
-            github_access_token = file.read().strip()
+        # Load GitHub access token from environment variable or file
+        github_access_token = os.environ.get("GITHUB_ACCESS_TOKEN")
+        if not github_access_token:
+            with open(".github_access_token", "r") as file:
+                github_access_token = file.read().strip()
 
         # Get GitHub repository URL
         github_repo_url = (
@@ -733,7 +735,6 @@ def enter(agent_name, branch):
         # If --branch was passed, add branch_to_benchmark to the JSON file
         if branch:
             data["branch_to_benchmark"] = branch
-
         # Create agent directory if it does not exist
         subprocess.check_call(["mkdir", "-p", "arena"])
 
