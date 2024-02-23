@@ -51,7 +51,10 @@ jobs:
 
       - name: Install Python dependencies
         run: |
-          curl -sSL https://install.python-poetry.org | python3 -
+          if ! command -v poetry &> /dev/null
+          then
+            curl -sSL https://install.python-poetry.org | python3 -
+          fi
           poetry install
 
       - name: Lint with flake8
@@ -152,7 +155,10 @@ jobs:
 
       - name: Install Python dependencies
         run: |
-          curl -sSL https://install.python-poetry.org | python3 -
+          if ! command -v poetry &> /dev/null
+          then
+            curl -sSL https://install.python-poetry.org | python3 -
+          fi
           poetry install
 
       - name: Run pytest with coverage
