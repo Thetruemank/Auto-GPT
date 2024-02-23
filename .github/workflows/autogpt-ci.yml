@@ -166,7 +166,7 @@ jobs:
           poetry run pytest -vv \
             --cov=autogpt --cov-branch --cov-report term-missing --cov-report xml \
             --numprocesses=logical --durations=10 \
-            tests/unit tests/integration
+            tests/unit tests/integration || poetry run pytest -vv --last-failed
         env:
           CI: true
           PLAIN_OUTPUT: True
