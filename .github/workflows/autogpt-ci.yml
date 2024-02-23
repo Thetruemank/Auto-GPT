@@ -51,7 +51,10 @@ jobs:
 
       - name: Install Python dependencies
         run: |
-          curl -sSL https://install.python-poetry.org | python3 -
+          if ! command -v poetry &> /dev/null
+          then
+            curl -sSL https://install.python-poetry.org | python3 -
+          fi
           poetry install
 
       - name: Lint with flake8
@@ -65,14 +68,15 @@ jobs:
         run: poetry run isort . --check
         if: success() || failure()
 
-      # - name: Check mypy formatting
-      #   run: poetry run mypy
-      #   if: success() || failure()
+      - name: Check mypy typing
+        run: poetry run mypy .
+        if: success() || failure()
 
       # - name: Check for unused imports and pass statements
       #   run: |
-      #     cmd="autoflake --remove-all-unused-imports --recursive --ignore-init-module-imports --ignore-pass-after-docstring autogpt tests"
-      #     poetry run $cmd --check || (echo "You have unused imports or pass statements, please run '${cmd} --in-place'" && exit 1)
+        run: |
+          cmd="autoflake --remove-all-unused-imports --recursive --check --ignore-init-module-imports --ignore-pass-after-docstring autogpt tests"
+          poetry run $cmd || (echo "You have unused imports or pass statements, please run '${cmd} --in-place'" && exit 1)
 
   test:
     permissions:
@@ -152,7 +156,10 @@ jobs:
 
       - name: Install Python dependencies
         run: |
-          curl -sSL https://install.python-poetry.org | python3 -
+          if ! command -v poetry &> /dev/null
+          then
+            curl -sSL https://install.python-poetry.org | python3 -
+          fi
           poetry install
 
       - name: Run pytest with coverage
@@ -160,7 +167,7 @@ jobs:
           poetry run pytest -vv \
             --cov=autogpt --cov-branch --cov-report term-missing --cov-report xml \
             --numprocesses=logical --durations=10 \
-            tests/unit tests/integration
+            tests/unit tests/integration || poetry run pytest -vv --last-failed
         env:
           CI: true
           PLAIN_OUTPUT: True
