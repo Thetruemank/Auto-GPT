@@ -3,7 +3,10 @@ import os
 import pytest
 
 
+# This decorator is used to skip certain tests when running in a Continuous Integration (CI) environment like GitHub Actions.
+# Skipping tests can be necessary for cases where tests require specific environment configurations not available in CI.
 def skip_in_ci(test_function):
+    print(f"Skipping {test_function.__name__} in CI environment due to CI={os.environ.get('CI')} and PYTHON_VERSION={os.environ.get('PYTHON_VERSION')}.")
     return pytest.mark.skipif(
         os.environ.get("CI") == "true",
         reason="This test doesn't work on GitHub Actions.",
