@@ -121,8 +121,19 @@ d88P     888  "Y88888  "Y888 "Y88P"   "Y8888P88 888           888
                         "✅ GitHub access token loaded successfully.", fg="green"
                     )
                 )
-                # Check if the token has the required permissions
-                import requests
+                import os
+                
+                # Skip GitHub access token validation if running under GitHub Actions
+                if os.environ.get('GITHUB_ACTIONS') == 'true':
+                    click.echo(
+                        click.style(
+                            "⚠️ GitHub access token validation is skipped in GitHub Actions.",
+                            fg="yellow",
+                        )
+                    )
+                else:
+                    # Check if the token has the required permissions
+                    import requests
 
                 headers = {"Authorization": f"token {github_access_token}"}
                 response = requests.get("https://api.github.com/user", headers=headers)
