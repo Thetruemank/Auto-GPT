@@ -1,0 +1,33 @@
+name: Continuous Integration
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    - name: Set up Git configuration and GitHub access token
+      env:
+        GIT_USER_NAME: 'AutoGPT CI'
+        GIT_USER_EMAIL: 'ci@autogpt.example.com'
+        GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_ACCESS_TOKEN }}
+      run: |
+        git config --global user.name "${GIT_USER_NAME}"
+        git config --global user.email "${GIT_USER_EMAIL}"
+    - name: Run lint checks
+      run: |
+        pip install flake8
+        flake8 .
+    - name: Execute the test suite
+      run: |
+        pip install pytest
+        pytest
