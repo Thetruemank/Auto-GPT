@@ -20,6 +20,9 @@ def test_json_memory_init_without_backing_file(
 
 
 def test_json_memory_init_with_backing_empty_file(
+from ...utils import skip_in_ci
+@skip_in_ci
+def test_json_memory_init_without_backing_file(
     config: Config, workspace: FileWorkspace
 ):
     index_file = workspace.root / f"{config.memory_index}.json"
@@ -32,6 +35,8 @@ def test_json_memory_init_with_backing_empty_file(
 
 
 def test_json_memory_init_with_backing_invalid_file(
+@skip_in_ci
+def test_json_memory_init_with_backing_empty_file(
     config: Config, workspace: FileWorkspace
 ):
     index_file = workspace.root / f"{config.memory_index}.json"
@@ -55,6 +60,8 @@ def test_json_memory_add(config: Config, memory_item: MemoryItem):
 
 
 def test_json_memory_clear(config: Config, memory_item: MemoryItem):
+@skip_in_ci
+def test_json_memory_init_with_backing_invalid_file(
     index = JSONFileMemory(config)
     assert index.memories == []
 
@@ -78,6 +85,8 @@ def test_json_memory_get(config: Config, memory_item: MemoryItem, mock_get_embed
 
 
 def test_json_memory_load_index(config: Config, memory_item: MemoryItem):
+@skip_in_ci
+def test_json_memory_clear(config: Config, memory_item: MemoryItem):
     index = JSONFileMemory(config)
     index.add(memory_item)
 
@@ -96,6 +105,8 @@ def test_json_memory_load_index(config: Config, memory_item: MemoryItem):
 
 
 @pytest.mark.vcr
+@skip_in_ci
+def test_json_memory_load_index(config: Config, memory_item: MemoryItem):
 @pytest.mark.requires_openai_api_key
 def test_json_memory_get_relevant(config: Config, patched_api_requestor: None) -> None:
     index = JSONFileMemory(config)

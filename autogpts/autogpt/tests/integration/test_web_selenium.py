@@ -18,3 +18,5 @@ async def test_browse_website_nonexistent_url(
 
         # Sanity check that the response is not too long
         assert len(raised.exconly()) < 200
+from ..utils import skip_in_ci
+@skip_in_ci

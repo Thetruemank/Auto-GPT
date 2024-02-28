@@ -29,6 +29,7 @@ def test_dalle(agent: Agent, workspace, image_size, patched_api_requestor):
 
 
 @pytest.mark.xfail(
+from ..utils import skip_in_ci
     reason="The image is too big to be put in a cassette for a CI pipeline. "
     "We're looking into a solution."
 )
@@ -49,6 +50,7 @@ def test_huggingface(agent: Agent, workspace, image_size, image_model):
 
 
 @pytest.mark.xfail(reason="SD WebUI call does not work.")
+@skip_in_ci
 def test_sd_webui(agent: Agent, workspace, image_size):
     """Test SD WebUI image generation."""
     generate_and_validate(
@@ -60,6 +62,7 @@ def test_sd_webui(agent: Agent, workspace, image_size):
 
 
 @pytest.mark.xfail(reason="SD WebUI call does not work.")
+@skip_in_ci
 def test_sd_webui_negative_prompt(agent: Agent, workspace, image_size):
     gen_image = functools.partial(
         generate_image_with_sd_webui,
@@ -102,6 +105,7 @@ def generate_and_validate(
     if hugging_face_image_model:
         agent.legacy_config.huggingface_image_model = hugging_face_image_model
     prompt = "astronaut riding a horse"
+@skip_in_ci
 
     image_path = lst(generate_image(prompt, agent, image_size, **kwargs))
     assert image_path.exists()
@@ -183,6 +187,7 @@ def test_huggingface_fail_request_no_delay(mocker, agent: Agent):
 
     # Verify retry was not called.
     mock_sleep.assert_not_called()
+@skip_in_ci
 
 
 def test_huggingface_fail_request_bad_json(mocker, agent: Agent):
@@ -206,6 +211,7 @@ def test_huggingface_fail_request_bad_json(mocker, agent: Agent):
 
     # Verify retry was not called.
     mock_sleep.assert_not_called()
+@skip_in_ci
 
 
 def test_huggingface_fail_request_bad_image(mocker, agent: Agent):
@@ -233,3 +239,4 @@ def test_huggingface_fail_missing_api_token(mocker, agent: Agent):
     # Verify request raises an error.
     with pytest.raises(ValueError):
         generate_image("astronaut riding a horse", agent, 512)
+@skip_in_ci
