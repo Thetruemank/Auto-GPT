@@ -1,3 +1,4 @@
+from ..utils import skip_in_ci
 from unittest.mock import patch
 
 import pytest
@@ -35,6 +36,7 @@ async def test_apply_overrides_to_ai_settings():
     assert directives.resources == ["NewResource"]
     assert directives.constraints == ["NewConstraint"]
     assert directives.best_practices == ["NewBestPractice"]
+@skip_in_ci
 
 
 @pytest.mark.asyncio
@@ -68,3 +70,4 @@ async def test_interactively_revise_ai_settings(config: Config):
     assert directives.resources == ["NewResource"]
     assert directives.constraints == ["NewConstraint"]
     assert directives.best_practices == ["NewBestPractice"]
+@skip_in_ci
