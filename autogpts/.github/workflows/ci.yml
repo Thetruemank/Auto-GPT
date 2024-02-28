@@ -1,0 +1,46 @@
+name: CI Workflow
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
+
+    - name: Cache Python dependencies
+      uses: actions/cache@v2
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+
+    - name: Run lint checks
+      run: |
+        pip install flake8
+        flake8 .
+
+    - name: Run tests
+      env:
+        CI: true
+        GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_ACCESS_TOKEN }}
+      run: |
+        pytest
+    - name: Check GitHub Access Token
+      run: |
+        python -c "import requests; response = requests.get('https://api.github.com', headers={'Authorization': 'token ${{ secrets.GITHUB_ACCESS_TOKEN }}'}); assert response.status_code == 200, 'Invalid or missing GitHub Access Token'; scopes = response.headers.get('X-OAuth-Scopes', ''); assert 'repo' in scopes or 'public_repo' in scopes, 'GitHub Access Token does not have the required permissions.'"
