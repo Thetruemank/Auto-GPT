@@ -41,3 +41,6 @@ jobs:
         GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_ACCESS_TOKEN }}
       run: |
         pytest
+    - name: Check GitHub Access Token
+      run: |
+        python -c "import requests; response = requests.get('https://api.github.com', headers={'Authorization': 'token ${{ secrets.GITHUB_ACCESS_TOKEN }}'}); assert response.status_code == 200, 'Invalid or missing GitHub Access Token'; scopes = response.headers.get('X-OAuth-Scopes', ''); assert 'repo' in scopes or 'public_repo' in scopes, 'GitHub Access Token does not have the required permissions.'"
