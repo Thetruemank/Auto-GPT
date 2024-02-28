@@ -139,16 +139,28 @@ d88P     888  "Y88888  "Y888 "Y88P"   "Y8888P88 888           888
                         install_error = True
                         click.echo(
                             click.style(
-                                "❌ GitHub access token does not have the required permissions. Please ensure it has 'public_repo' or 'repo' scope.",
+                                "❌ GitHub access token does not have the required permissions. Please ensure it has 'public_repo' or 'repo' scope. This is crucial for CI environments to function correctly.",
                                 fg="red",
+                            )
+                        )
+                        click.echo(
+                            click.style(
+                                "For CI environments, ensure the GITHUB_ACCESS_TOKEN secret is set with the correct permissions.",
+                                fg="yellow",
                             )
                         )
                 else:
                     install_error = True
                     click.echo(
                         click.style(
-                            "❌ Failed to validate GitHub access token. Please ensure it is correct.",
+                            "❌ Failed to validate GitHub access token. This may be due to network issues or incorrect token. Please double-check the token and try again.",
                             fg="red",
+                        )
+                    )
+                    click.echo(
+                        click.style(
+                            "In CI environments, verify the GITHUB_ACCESS_TOKEN secret is correctly set and has not expired.",
+                            fg="yellow",
                         )
                     )
             else:
