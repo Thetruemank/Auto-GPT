@@ -107,6 +107,14 @@ d88P     888  "Y88888  "Y888 "Y88P"   "Y8888P88 888           888
                 '  git config --global user.email "Your email"', fg="red"
             )
         )
+        # In a GitHub Actions environment, ensure the token is set via secrets
+        if os.environ.get('GITHUB_ACTIONS'):
+            click.echo(
+                click.style(
+                    "🔒 GitHub Actions detected. Ensure your GitHub token is set in the repository secrets with the necessary permissions.",
+                    fg="yellow",
+                )
+            )
         install_error = True
 
     print_access_token_instructions = False
@@ -139,7 +147,7 @@ d88P     888  "Y88888  "Y888 "Y88P"   "Y8888P88 888           888
                         install_error = True
                         click.echo(
                             click.style(
-                                "❌ GitHub access token does not have the required permissions. Please ensure it has 'public_repo' or 'repo' scope.",
+                                "❌ GitHub access token does not have the required permissions. Ensure it has 'public_repo' or 'repo' scope. For GitHub Actions, set the token in the repository secrets.",
                                 fg="red",
                             )
                         )
@@ -147,7 +155,7 @@ d88P     888  "Y88888  "Y888 "Y88P"   "Y8888P88 888           888
                     install_error = True
                     click.echo(
                         click.style(
-                            "❌ Failed to validate GitHub access token. Please ensure it is correct.",
+                            "❌ Failed to validate GitHub access token. Please ensure it is correct. For GitHub Actions, verify the token in the repository secrets.",
                             fg="red",
                         )
                     )
@@ -155,7 +163,7 @@ d88P     888  "Y88888  "Y888 "Y88P"   "Y8888P88 888           888
                 install_error = True
                 click.echo(
                     click.style(
-                        "❌ GitHub access token file is empty. Please follow the instructions below to set up your GitHub access token.",
+                        "❌ GitHub access token file is empty. Please follow the instructions below to set up your GitHub access token. For GitHub Actions, ensure the token is set in the repository secrets.",
                         fg="red",
                     )
                 )
@@ -195,7 +203,16 @@ d88P     888  "Y88888  "Y888 "Y88P"   "Y8888P88 888           888
             )
         )
         click.echo(
-            click.style("\t7. Save the file and run the setup command again.", fg="red")
+            click.style("\t7. Save the file and run the setup command again. For GitHub Actions, ensure the token is securely stored in the repository secrets.", fg="red")
+        )
+        click.echo(
+            click.style("\t8. In your GitHub repository, go to Settings > Secrets and click on 'New repository secret'.", fg="red")
+        )
+        click.echo(
+            click.style("\t9. Name your secret (e.g., 'GITHUB_TOKEN') and paste your access token.", fg="red")
+        )
+        click.echo(
+            click.style("\t10. Update your GitHub Actions workflow file to use this secret with the 'secrets' context.", fg="red")
         )
 
     if install_error:
