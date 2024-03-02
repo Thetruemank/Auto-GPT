@@ -10,8 +10,13 @@ try:
 except ImportError:
     import os
 
-    os.system("pip3 install click")
-    os.system("pip3 install PyGithub")
+    import subprocess
+    try:
+        subprocess.check_call(["pip3", "install", "click"])
+        subprocess.check_call(["pip3", "install", "PyGithub"])
+    except subprocess.CalledProcessError as e:
+        print(f"Failed to install dependencies: {e}")
+        exit(1)
     import click
 
 
