@@ -49,7 +49,10 @@ d88P     888  "Y88888  "Y888 "Y88P"   "Y8888P88 888           888
     if os.path.exists(setup_script):
         click.echo(click.style("🚀 Setup initiated...\n", fg="green"))
         try:
-            subprocess.check_call([setup_script], cwd=script_dir)
+            if os.environ.get("CI") != "true":
+                subprocess.check_call([setup_script], cwd=script_dir)
+            else:
+                click.echo(click.style("CI environment detected. Skipping setup script execution.", fg="yellow"))
         except subprocess.CalledProcessError:
             click.echo(
                 click.style("❌ There was an issue with the installation.", fg="red")
@@ -64,50 +67,56 @@ d88P     888  "Y88888  "Y888 "Y88P"   "Y8888P88 888           888
         install_error = True
 
     try:
-        # Check if git user is configured
-        user_name = (
-            subprocess.check_output(["git", "config", "user.name"])
-            .decode("utf-8")
-            .strip()
-        )
-        user_email = (
-            subprocess.check_output(["git", "config", "user.email"])
-            .decode("utf-8")
-            .strip()
-        )
+        if os.environ.get("CI") != "true":
+            # Check if git user is configured
+            user_name = (
+                subprocess.check_output(["git", "config", "user.name"])
+                .decode("utf-8")
+                .strip()
+            )
+            user_email = (
+                subprocess.check_output(["git", "config", "user.email"])
+                .decode("utf-8")
+                .strip()
+            )
 
-        if user_name and user_email:
-            click.echo(
-                click.style(
-                    f"✅ Git is configured with name '{user_name}' and email '{user_email}'",
-                    fg="green",
+            if user_name and user_email:
+                click.echo(
+                    click.style(
+                        f"✅ Git is configured with name '{user_name}' and email '{user_email}'",
+                        fg="green",
+                    )
                 )
-            )
+            else:
+                raise subprocess.CalledProcessError(
+                    returncode=1, cmd="git config user.name or user.email"
+                )
         else:
-            raise subprocess.CalledProcessError(
-                returncode=1, cmd="git config user.name or user.email"
-            )
+            click.echo(click.style("CI environment detected. Skipping Git user configuration check.", fg="yellow"))
 
     except subprocess.CalledProcessError:
-        # If the GitHub account is not configured, print instructions on how to set it up
-        click.echo(click.style("⚠️ Git user is not configured.", fg="red"))
-        click.echo(
-            click.style(
-                "To configure Git with your user info, use the following commands:",
-                fg="red",
+        if os.environ.get("CI") != "true":
+            # If the GitHub account is not configured, print instructions on how to set it up
+            click.echo(click.style("⚠️ Git user is not configured.", fg="red"))
+            click.echo(
+                click.style(
+                    "To configure Git with your user info, use the following commands:",
+                    fg="red",
+                )
             )
-        )
-        click.echo(
-            click.style(
-                '  git config --global user.name "Your (user)name"', fg="red"
+            click.echo(
+                click.style(
+                    '  git config --global user.name "Your (user)name"', fg="red"
+                )
             )
-        )
-        click.echo(
-            click.style(
-                '  git config --global user.email "Your email"', fg="red"
+            click.echo(
+                click.style(
+                    '  git config --global user.email "Your email"', fg="red"
+                )
             )
-        )
-        install_error = True
+            install_error = True
+        else:
+            click.echo(click.style("CI environment detected. Git user configuration check skipped.", fg="yellow"))
 
     print_access_token_instructions = False
 
@@ -121,21 +130,39 @@ d88P     888  "Y88888  "Y888 "Y88P"   "Y8888P88 888           888
                         "✅ GitHub access token loaded successfully.", fg="green"
                     )
                 )
-                # Check if the token has the required permissions
-                import requests
+                if os.environ.get("CI") != "true":
+                    # Check if the token has the required permissions
+                    import requests
 
-                headers = {"Authorization": f"token {github_access_token}"}
-                response = requests.get("https://api.github.com/user", headers=headers)
-                if response.status_code == 200:
-                    scopes = response.headers.get("X-OAuth-Scopes")
-                    if "public_repo" in scopes or "repo" in scopes:
+                    headers = {"Authorization": f"token {github_access_token}"}
+                    response = requests.get("https://api.github.com/user", headers=headers)
+                    if response.status_code == 200:
+                        scopes = response.headers.get("X-OAuth-Scopes")
+                        if "public_repo" in scopes or "repo" in scopes:
+                            click.echo(
+                                click.style(
+                                    "✅ GitHub access token has the required permissions.",
+                                    fg="green",
+                                )
+                            )
+                        else:
+                            install_error = True
+                            click.echo(
+                                click.style(
+                                    "❌ GitHub access token does not have the required permissions. Please ensure it has 'public_repo' or 'repo' scope.",
+                                    fg="red",
+                                )
+                            )
+                    else:
+                        install_error = True
                         click.echo(
                             click.style(
-                                "✅ GitHub access token has the required permissions.",
-                                fg="green",
+                                "❌ Failed to validate GitHub access token. Please ensure it is correct.",
+                                fg="red",
                             )
                         )
-                    else:
+                else:
+                    click.echo(click.style("CI environment detected. GitHub access token validation skipped.", fg="yellow"))
                         install_error = True
                         click.echo(
                             click.style(
