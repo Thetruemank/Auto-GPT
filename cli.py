@@ -121,12 +121,14 @@ d88P     888  "Y88888  "Y888 "Y88P"   "Y8888P88 888           888
                         "✅ GitHub access token loaded successfully.", fg="green"
                     )
                 )
-                # Check if the token has the required permissions
+                # Enhanced GitHub access token validation with scope check
                 import requests
 
                 headers = {"Authorization": f"token {github_access_token}"}
                 response = requests.get("https://api.github.com/user", headers=headers)
-                if response.status_code == 200:
+                scopes_response = requests.get("https://api.github.com/rate_limit", headers=headers)
+                scopes = scopes_response.headers.get('X-OAuth-Scopes', '').split(', ')
+                if response.status_code == 200 and 'repo' in scopes:
                     scopes = response.headers.get("X-OAuth-Scopes")
                     if "public_repo" in scopes or "repo" in scopes:
                         click.echo(
@@ -147,7 +149,7 @@ d88P     888  "Y88888  "Y888 "Y88P"   "Y8888P88 888           888
                     install_error = True
                     click.echo(
                         click.style(
-                            "❌ Failed to validate GitHub access token. Please ensure it is correct.",
+                            "❌ Failed to validate GitHub access token. Ensure it is correct and has 'repo' scope.",
                             fg="red",
                         )
                     )
@@ -179,6 +181,30 @@ d88P     888  "Y88888  "Y888 "Y88P"   "Y8888P88 888           888
         )
         click.echo(
             click.style("\t2. Navigate to https://github.com/settings/tokens", fg="red")
+        )
+        click.echo(
+            click.style(
+                "\t3. When generating a new token, ensure you select the 'repo' scope for full repository access.",
+                fg="red"
+            )
+        )
+        click.echo(
+            click.style(
+                "\t4. After generating the token, click 'Generate token' at the bottom of the page.",
+                fg="red"
+            )
+        )
+        click.echo(
+            click.style(
+                "\t5. Copy the generated token and paste it into the '.github_access_token' file.",
+                fg="red"
+            )
+        )
+        click.echo(
+            click.style(
+                "\t6. Save the '.github_access_token' file and run the setup command again.",
+                fg="red"
+            )
         )
         click.echo(click.style("\t3. Click on 'Generate new token'.", fg="red"))
         click.echo(click.style("\t4. Click on 'Generate new token (classic)'.", fg="red"))

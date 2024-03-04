@@ -23,7 +23,7 @@ class AuthService {
         return await _auth.signInWithCredential(credential);
       }
     } catch (e) {
-      print("Error during Google Sign-In: $e");
+      print("Error during Google Sign-In: ${e.toString()}. StackTrace: ${e.stackTrace}");
       return null;
     }
   }
@@ -34,7 +34,7 @@ class AuthService {
       final GithubAuthProvider provider = GithubAuthProvider();
       return await _auth.signInWithPopup(provider);
     } catch (e) {
-      print("Error during GitHub Sign-In: $e");
+      print("Error during GitHub Sign-In: ${e.toString()}. StackTrace: ${e.stackTrace}");
       return null;
     }
   }
@@ -49,3 +49,8 @@ class AuthService {
     return _auth.currentUser;
   }
 }
+      // Check if running in CI environment
+      if (Platform.environment.containsKey('CI')) {
+        print("GitHub Sign-In is not supported in CI environments.");
+        return null;
+      }
