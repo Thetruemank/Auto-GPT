@@ -4,15 +4,16 @@ This is a minimal file intended to be run by users to help them manage the autog
 If you want to contribute, please use only libraries that come as part of Python.
 To ensure efficiency, add the imports to the functions so only what is needed is imported.
 """
-try:
-    import click
-    import github
-except ImportError:
-    import os
+This is a minimal file intended to be run by users to help them manage the autogpt projects.
 
-    os.system("pip3 install click")
-    os.system("pip3 install PyGithub")
-    import click
+If you want to contribute, please use only libraries that come as part of Python.
+To ensure efficiency, add the imports to the functions so only what is needed is imported.
+
+Before running this CLI script, ensure that all dependencies are installed by running:
+pip install -r requirements.txt
+"""
+import click
+import github
 
 
 @click.group()
@@ -41,6 +42,9 @@ d88P     888  "Y88888  "Y888 "Y88P"   "Y8888P88 888           888
 """,
             fg="green",
         )
+# Create a requirements.txt file at the root of the repository with the following content:
+# click
+# PyGithub
     )
 
     script_dir = os.path.dirname(os.path.realpath(__file__))
