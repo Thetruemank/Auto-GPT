@@ -1,0 +1,31 @@
+name: .github/workflows/ci.yml
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    - name: Configure Git user
+      run: |
+        git config --global user.name "CI User"
+        git config --global user.email "ci-user@example.com"
+    - name: Create dummy .github_access_token
+      run: echo "dummy_token" > .github_access_token
+    - name: Run tests
+      env:
+        GITHUB_ACTIONS: 'true'
+      run: pytest
