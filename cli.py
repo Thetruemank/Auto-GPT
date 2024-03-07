@@ -110,12 +110,14 @@ d88P     888  "Y88888  "Y888 "Y88P"   "Y8888P88 888           888
         install_error = True
 
     print_access_token_instructions = False
-
-    # Check for the existence of the .github_access_token file
-    if os.path.exists(".github_access_token"):
-        with open(".github_access_token", "r") as file:
-            github_access_token = file.read().strip()
-            if github_access_token:
+    if os.environ.get("GITHUB_ACTIONS") == "true":
+        click.echo(click.style("Running in GitHub Actions environment. Skipping GitHub access token checks.", fg="yellow"))
+    else:
+        # Check for the existence of the .github_access_token file
+        if os.path.exists(".github_access_token"):
+            with open(".github_access_token", "r") as file:
+                github_access_token = file.read().strip()
+                if github_access_token:
                 click.echo(
                     click.style(
                         "✅ GitHub access token loaded successfully.", fg="green"
