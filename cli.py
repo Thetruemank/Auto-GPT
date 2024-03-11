@@ -50,7 +50,12 @@ d88P     888  "Y88888  "Y888 "Y88P"   "Y8888P88 888           888
         click.echo(click.style("🚀 Setup initiated...\n", fg="green"))
         try:
             subprocess.check_call([setup_script], cwd=script_dir)
-        except subprocess.CalledProcessError:
+        except subprocess.CalledProcessError as e:
+            click.echo(
+                click.style(f"❌ There was an issue with the installation: {e}", fg="red")
+            )
+            # Log the error for debugging purposes
+            click.echo(click.style(f"Error details: {e.stderr.decode()}", fg="red"))
             click.echo(
                 click.style("❌ There was an issue with the installation.", fg="red")
             )
@@ -108,7 +113,32 @@ d88P     888  "Y88888  "Y888 "Y88P"   "Y8888P88 888           888
             )
         )
         install_error = True
-
+        # Enhanced error handling for git configuration checks
+        user_name = subprocess.check_output(["git", "config", "user.name"], stderr=subprocess.PIPE)
+        user_email = subprocess.check_output(["git", "config", "user.email"], stderr=subprocess.PIPE)
+        try:
+            user_name = user_name.decode("utf-8").strip()
+            user_email = user_email.decode("utf-8").strip()
+        except subprocess.CalledProcessError as e:
+            click.echo(click.style(f"⚠️ Git user is not configured: {e}", fg="red"))
+            click.echo(click.style(f"Error details: {e.stderr.decode()}", fg="red"))
+            click.echo(
+                click.style(
+                    "To configure Git with your user info, use the following commands:",
+                    fg="red",
+                )
+            )
+            click.echo(
+                click.style(
+                    '  git config --global user.name "Your (user)name"', fg="red"
+                )
+            )
+            click.echo(
+                click.style(
+                    '  git config --global user.email "Your email"', fg="red"
+                )
+            )
+            install_error = True
     print_access_token_instructions = False
 
     # Check for the existence of the .github_access_token file
@@ -139,15 +169,21 @@ d88P     888  "Y88888  "Y888 "Y88P"   "Y8888P88 888           888
                         install_error = True
                         click.echo(
                             click.style(
-                                "❌ GitHub access token does not have the required permissions. Please ensure it has 'public_repo' or 'repo' scope.",
+                                "❌ GitHub access token does not have the required permissions. It is missing 'public_repo' or 'repo' scope. Please review your token's scopes.",
                                 fg="red",
+                            )
+                        )
+                        click.echo(
+                            click.style(
+                                "💡 Tip: You can modify your token's scopes in GitHub settings under 'Developer settings' > 'Personal access tokens'.",
+                                fg="yellow",
                             )
                         )
                 else:
                     install_error = True
                     click.echo(
                         click.style(
-                            "❌ Failed to validate GitHub access token. Please ensure it is correct.",
+                            "❌ Failed to validate GitHub access token. This could be due to network issues or an incorrect token.",
                             fg="red",
                         )
                     )
@@ -180,6 +216,12 @@ d88P     888  "Y88888  "Y888 "Y88P"   "Y8888P88 888           888
         click.echo(
             click.style("\t2. Navigate to https://github.com/settings/tokens", fg="red")
         )
+                        click.echo(
+                            click.style(
+                                "💡 Tip: Double-check your token and ensure your network allows requests to 'https://api.github.com'.",
+                                fg="yellow",
+                            )
+                        )
         click.echo(click.style("\t3. Click on 'Generate new token'.", fg="red"))
         click.echo(click.style("\t4. Click on 'Generate new token (classic)'.", fg="red"))
         click.echo(
