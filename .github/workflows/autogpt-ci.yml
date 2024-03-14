@@ -159,8 +159,8 @@ jobs:
         run: |
           poetry run pytest -vv \
             --cov=autogpt --cov-branch --cov-report term-missing --cov-report xml \
-            --numprocesses=logical --durations=10 \
-            tests/unit tests/integration
+            --durations=10 \
+            tests/unit tests/integration tests/e2e
         env:
           CI: true
           PLAIN_OUTPUT: True
