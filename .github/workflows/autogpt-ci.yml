@@ -47,7 +47,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.cache/pypoetry
-          key: ${{ runner.os }}-poetry-${{ hashFiles('autogpts/autogpt/pyproject.toml') }}-${{ steps.get_date.outputs.date }}
+          key: ${{ runner.os }}-poetry-${{ hashFiles('autogpts/autogpt/pyproject.toml') }}
 
       - name: Install Python dependencies
         run: |
@@ -148,7 +148,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.cache/pypoetry
-          key: ${{ runner.os }}-poetry-${{ hashFiles('autogpts/autogpt/pyproject.toml') }}-${{ steps.get_date.outputs.date }}
+          key: ${{ runner.os }}-poetry-${{ hashFiles('autogpts/autogpt/pyproject.toml') }}
 
       - name: Install Python dependencies
         run: |
