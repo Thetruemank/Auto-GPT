@@ -47,7 +47,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.cache/pypoetry
-          key: ${{ runner.os }}-poetry-${{ hashFiles('autogpts/autogpt/pyproject.toml') }}-${{ steps.get_date.outputs.date }}
+          key: ${{ runner.os }}-poetry-${{ hashFiles('autogpts/autogpt/pyproject.toml') }}
 
       - name: Install Python dependencies
         run: |
@@ -148,7 +148,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.cache/pypoetry
-          key: ${{ runner.os }}-poetry-${{ hashFiles('autogpts/autogpt/pyproject.toml') }}-${{ steps.get_date.outputs.date }}
+          key: ${{ runner.os }}-poetry-${{ hashFiles('autogpts/autogpt/pyproject.toml') }}
 
       - name: Install Python dependencies
         run: |
@@ -159,8 +159,8 @@ jobs:
         run: |
           poetry run pytest -vv \
             --cov=autogpt --cov-branch --cov-report term-missing --cov-report xml \
-            --numprocesses=logical --durations=10 \
-            tests/unit tests/integration
+            --durations=10 \
+            tests/unit tests/integration tests/e2e
         env:
           CI: true
           PLAIN_OUTPUT: True
@@ -192,7 +192,7 @@ jobs:
       - id: push_cassettes
         name: Push updated cassettes
         # For pull requests, push updated cassettes even when tests fail
-        if: github.event_name == 'push' || (! github.event.pull_request.head.repo.fork && (success() || failure()))
+        if: (github.event_name == 'push' && ! github.event.pull_request.head.repo.fork) || (github.event_name == 'pull_request' && (success() || failure()))
         env:
           PR_BRANCH: ${{ github.event.pull_request.head.ref }}
           PR_AUTHOR: ${{ github.event.pull_request.user.login }}
