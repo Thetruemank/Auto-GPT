@@ -38,7 +38,13 @@ def app_data_dir(tmp_project_root: Path) -> Path:
     dir.mkdir(parents=True, exist_ok=True)
     return dir
 
+from autogpt.tests.utils import skip_in_ci
 
+@pytest.hookimpl(tryfirst=True)
+def pytest_collection_modifyitems(config, items):
+    for item in items:
+        if "external" in item.keywords:
+            item.add_marker(skip_in_ci(item.function))
 @pytest.fixture()
 def agent_data_dir(app_data_dir: Path) -> Path:
     return app_data_dir / "agents/AutoGPT"
