@@ -86,9 +86,15 @@ class CreateNewAbility(Ability):
                 type=JSONSchema.Type.STRING,
             ),
         ),
+        "programming_language": JSONSchema(
+            description="The programming language in which the ability will be created. Accepts 'Python' or 'Kotlin'.",
+            type=JSONSchema.Type.STRING,
+            enum=["Python", "Kotlin"],
+            required=True,
+        ),
         "code": JSONSchema(
             description=(
-                "The Python code that will be executed when the ability is called."
+                "The code that will be executed when the ability is called. Supports Python and Kotlin."
             ),
             type=JSONSchema.Type.STRING,
             required=True,
@@ -99,9 +105,15 @@ class CreateNewAbility(Ability):
         self,
         ability_name: str,
         description: str,
+        programming_language: str,
         arguments: list[dict],
         required_arguments: list[str],
         package_requirements: list[str],
         code: str,
     ) -> AbilityResult:
-        raise NotImplementedError
+        if programming_language == "Python":
+            # Existing logic for generating Python code
+            raise NotImplementedError
+        elif programming_language == "Kotlin":
+            # New logic for generating Kotlin code
+            raise NotImplementedError
